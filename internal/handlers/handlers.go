@@ -46,14 +46,38 @@ func HandlerForForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := service.ParseString(string(fileBytes))
+	stringData, err := service.ParseString(string(fileBytes))
 	if err != nil {
 		http.Error(w, "Error parse string from file: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	newFile, err := os.OpenFile(time.Now().UTC().String()+filepath.Ext(header.Filename), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0755)
+	var nameFile = time.Now().UTC().Format("2006-01-02_15-04-05") + filepath.Ext(header.Filename)
+	newFile, err := os.OpenFile(nameFile, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0755)
 	if err != nil {
+		http.Error(w, "Error parse string from file: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
+	defer newFile.Close()
+
+	_, err = newFile.Write([]byte(stringData))
+	if err != nil {
+		http.Error(w, "Error parse write to new file: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	newFileBytes, err := io.ReadAll(newFile)
+	if err != nil {
+		http.Error(w, "Error parse write to new file: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text")
+	w.WriteHeader(http.StatusOK)
+	_, err = w.Write(newFileBytes)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }

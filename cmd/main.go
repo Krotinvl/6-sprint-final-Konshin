@@ -1,14 +1,16 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/Yandex-Practicum/go1fl-sprint6-final/internal/server"
 )
 
 func main() {
-	if err := server.StartServer(); err != nil {
-		fmt.Printf("Error starting server: %s", err)
-	}
+	var logger *log.Logger
+	srv := server.StartServer(logger)
 
+	if err := srv.Server.ListenAndServe(); err != nil {
+		log.Fatalf("Server starting error: %s", err)
+	}
 }
