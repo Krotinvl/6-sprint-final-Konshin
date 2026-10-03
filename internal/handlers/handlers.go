@@ -67,15 +67,9 @@ func HandlerForForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newFileBytes, err := io.ReadAll(newFile)
-	if err != nil {
-		http.Error(w, "Error parse write to new file: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text")
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	_, err = w.Write(newFileBytes)
+	_, err = w.Write([]byte(stringData))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
