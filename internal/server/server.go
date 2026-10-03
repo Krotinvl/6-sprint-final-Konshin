@@ -9,11 +9,11 @@ import (
 )
 
 type Server struct {
-	Loger  *log.Logger
+	Logger *log.Logger
 	Server *http.Server
 }
 
-func StartServer(loger *log.Logger) *Server {
+func StartServer(logger *log.Logger) *Server {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", handlers.GetHtml)
@@ -22,7 +22,7 @@ func StartServer(loger *log.Logger) *Server {
 	srv := &http.Server{
 		Addr:         ":8080",
 		Handler:      mux,
-		ErrorLog:     loger,
+		ErrorLog:     logger,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  15 * time.Second,
@@ -30,6 +30,6 @@ func StartServer(loger *log.Logger) *Server {
 
 	return &Server{
 		Server: srv,
-		Loger:  loger,
+		Logger: logger,
 	}
 }
